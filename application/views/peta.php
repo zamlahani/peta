@@ -7,8 +7,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 	<title>Welcome to CodeIgniter</title>
-	<link rel="stylesheet" href="https://peta.zamlahani.com/assets/leaflet/leaflet.css"/>
-	<script src="https://peta.zamlahani.com/assets/leaflet/leaflet.js"></script>
+	<link rel="stylesheet" href="<?php echo base_url() ?>assets/leaflet/leaflet.css"/>
+	<script src="<?php echo base_url() ?>assets/leaflet/leaflet.js"></script>
 	<style>
 	    body {
     padding: 0;
@@ -39,7 +39,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
     id: 'mapbox.streets',
     accessToken: 'pk.eyJ1IjoiemFtbGFoYW5pIiwiYSI6ImNqbGcwN28zbTBndmszcHBrOGl5eHBidjQifQ.bsbdXVbvSlGQIewC9NFg_w'
 }).addTo(mymap);
-mymap.locate({watch:true});
+mymap.locate();
 mymap.on('click', function(e){
   var coord = e.latlng;
   var lat = coord.lat;
@@ -48,14 +48,20 @@ mymap.on('click', function(e){
   console.log("Distance: "+e.latlng.distanceTo(myLoc));
   
   });
-  var myLoc;
+  var myLoc,marker,circle;
 function onLocationFound(e) {
     var radius = e.accuracy / 2;
-
-    L.marker(e.latlng).addTo(mymap)
-        .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-    L.circle(e.latlng, radius).addTo(mymap);
+    if(marker){
+        marker.remove();
+    }
+    marker = L.marker(e.latlng);
+    marker.addTo(mymap)
+        .bindPopup("You are within " + radius.toFixed(2) + " meters from this point").openPopup();
+    if(circle){
+        circle.remove();
+    }
+    circle=L.circle(e.latlng, radius);
+    circle.addTo(mymap);
     myLoc=e.latlng;
 }
 
